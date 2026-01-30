@@ -2,6 +2,7 @@ import pandas as pd
 from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
+import os
 
 # ======================
 # CONFIGURATION
@@ -9,8 +10,8 @@ from email.mime.text import MIMEText
 SHEET_URL = "https://docs.google.com/spreadsheets/d/1Trao2R-1gF1M1_ejVExiOgJzGPx5AZ4WhuWS893PQp8/export?format=csv&gid=1281822850"
 MONTHLY_SUMMARY_CSV = "/Users/samarthrao/LocalFiles/daily_expenses/monthly_summary.csv"
 
-EMAIL = "sharesam63@gmail.com"      # Replace with your email
-APP_PASSWORD = "hzroluwzffwnfklh"
+EMAIL = os.environ["EMAIL_USER"]
+APP_PASSWORD = os.environ["EMAIL_APP_PASSWORD"]
 # ======================
 # STEP 1: READ SHEET
 # ======================
