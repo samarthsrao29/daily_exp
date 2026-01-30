@@ -7,11 +7,22 @@ import os
 # ======================
 # CONFIGURATION
 # ======================
-SHEET_URL = "https://docs.google.com/spreadsheets/d/1Trao2R-1gF1M1_ejVExiOgJzGPx5AZ4WhuWS893PQp8/export?format=csv&gid=1281822850"
-MONTHLY_SUMMARY_CSV = "/Users/samarthrao/LocalFiles/daily_expenses/monthly_summary.csv"
 
+# Google Sheet CSV export URL
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1Trao2R-1gF1M1_ejVExiOgJzGPx5AZ4WhuWS893PQp8/export?format=csv&gid=1281822850"
+
+# Folder to store CSVs (relative path, works in GitHub Actions)
+DATA_FOLDER = "data"
+os.makedirs(DATA_FOLDER, exist_ok=True)
+
+# Paths
+MONTHLY_SUMMARY_CSV = os.path.join(DATA_FOLDER, "monthly_summary.csv")
+ALL_EXPENSES_CSV = os.path.join(DATA_FOLDER, "all_expenses.csv")
+
+# Email from environment variables (set as GitHub Secrets)
 EMAIL = os.environ["EMAIL_USER"]
 APP_PASSWORD = os.environ["EMAIL_APP_PASSWORD"]
+
 # ======================
 # STEP 1: READ SHEET
 # ======================
@@ -32,6 +43,8 @@ cols = [
 for c in cols:
     df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0)
 
+# Save full backup CSV
+df.to_csv(ALL_EXPENSES_CSV, index=False)
 
 # ======================
 # STEP 2: AGGREGATE DATA
@@ -100,7 +113,7 @@ except Exception as e:
 # ======================
 # STEP 5: PRINT SUMMARY
 # ======================
-print("\nRaw Form Data:\n") 
+print("\nRaw Form Data:\n")
 print(df)
 print("\nMonthly Summary:\n")
 print(monthly)
