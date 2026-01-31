@@ -115,6 +115,14 @@ if args.mode == "report":
     msg["To"] = EMAIL
 
     try:
+        print(f"DEBUG: Starting email send process...")
+        print(f"DEBUG: EMAIL_USER present: {'Yes' if EMAIL else 'No'}")
+        print(f"DEBUG: EMAIL_APP_PASSWORD present: {'Yes' if APP_PASSWORD else 'No'}")
+        if EMAIL:
+            print(f"DEBUG: EMAIL_USER length: {len(EMAIL)}")
+        if APP_PASSWORD:
+            print(f"DEBUG: EMAIL_APP_PASSWORD length: {len(APP_PASSWORD)}")
+            
         server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
         server.login(EMAIL, APP_PASSWORD)
         server.send_message(msg)
