@@ -23,6 +23,7 @@ os.makedirs(DATA_FOLDER, exist_ok=True)
 # Paths
 MONTHLY_SUMMARY_CSV = os.path.join(DATA_FOLDER, "monthly_summary.csv")
 ALL_EXPENSES_CSV = os.path.join(DATA_FOLDER, "all_expenses.csv")
+DAILY_SUMMARY_CSV = os.path.join(DATA_FOLDER, "daily_category_sums.csv")
 
 # # Email from environment variables (set as GitHub Secrets)
 # EMAIL = os.environ.get("EMAIL_USER")
@@ -66,6 +67,14 @@ monthly["Total"] = monthly.sum(axis=1)
 
 # Save monthly summary CSV
 monthly.to_csv(MONTHLY_SUMMARY_CSV)
+
+# Daily totals per category
+df["Date"] = df["Timestamp"].str[:10]  # DD/MM/YYYY
+daily = df.groupby("Date")[cols].sum()
+daily["Total"] = daily.sum(axis=1)
+
+# Save daily summary CSV
+daily.to_csv(DAILY_SUMMARY_CSV)
 
 # ======================
 # STEP 3: INSIGHTS FOR EMAIL
