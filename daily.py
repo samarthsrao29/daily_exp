@@ -36,7 +36,8 @@ cols = [
     "Food Amount",
     "Travel Amount",
     "Investment Amount",
-    "Hard Cash Amount"
+    "Hard Cash Amount",
+    "Other stuffs"
 ]
 
 # Convert to numeric safely
@@ -84,6 +85,7 @@ Food: {summary['Food Amount']}
 Travel: {summary['Travel Amount']}
 Investment: {summary['Investment Amount']}
 Hard Cash: {summary['Hard Cash Amount']}
+Other Stuffs: {summary['Other stuffs']}
 
 --------------------------
 Total Spend: {total}
