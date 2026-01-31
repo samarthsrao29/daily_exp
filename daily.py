@@ -1,5 +1,9 @@
 import argparse
 from datetime import datetime, timedelta
+import pandas as pd
+import smtplib
+from email.mime.text import MIMEText
+import os
 
 # ======================
 # CONFIGURATION
@@ -9,8 +13,57 @@ from datetime import datetime, timedelta
 parser = argparse.ArgumentParser()
 parser.add_argument("--mode", choices=["update", "report"], required=True, help="Mode: update (data only) or report (send email)")
 args = parser.parse_args()
+# Google Sheet CSV export URL
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1Trao2R-1gF1M1_ejVExiOgJzGPx5AZ4WhuWS893PQp8/export?format=csv&gid=1281822850"
 
-# ... (rest of config)
+# Folder to store CSVs (relative path, works in GitHub Actions)
+DATA_FOLDER = "data"
+os.makedirs(DATA_FOLDER, exist_ok=True)
+
+# Paths
+MONTHLY_SUMMARY_CSV = os.path.join(DATA_FOLDER, "monthly_summary.csv")
+ALL_EXPENSES_CSV = os.path.join(DATA_FOLDER, "all_expenses.csv")
+
+# Email from environment variables (set as GitHub Secrets)
+EMAIL = os.environ.get("EMAIL_USER")
+APP_PASSWORD = os.environ.get("EMAIL_APP_PASSWORD")
+
+# ======================
+# STEP 1: READ SHEET
+# ======================
+df = pd.read_csv(SHEET_URL)
+
+# Clean column names
+df.columns = df.columns.str.strip()
+
+# Columns for expenses
+cols = [
+    "Food Amount",
+    "Travel Amount",
+    "Investment Amount",
+    "Hard Cash Amount",
+    "Other stuffs"
+]
+
+# Convert to numeric safely
+for c in cols:
+    df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0)
+
+# Save full backup CSV
+df.to_csv(ALL_EXPENSES_CSV, index=False)
+
+# ======================
+# STEP 2: AGGREGATE DATA
+# ======================
+# Extract Month from Timestamp (assumes format like "30/01/2026 21:52:53")
+df["Month"] = df["Timestamp"].str[3:10]  # MM/YYYY
+
+# Monthly totals per category
+monthly = df.groupby("Month")[cols].sum()
+monthly["Total"] = monthly.sum(axis=1)
+
+# Save monthly summary CSV
+monthly.to_csv(MONTHLY_SUMMARY_CSV)
 
 # ======================
 # STEP 3: INSIGHTS FOR EMAIL
