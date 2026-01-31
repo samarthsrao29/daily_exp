@@ -24,10 +24,12 @@ os.makedirs(DATA_FOLDER, exist_ok=True)
 MONTHLY_SUMMARY_CSV = os.path.join(DATA_FOLDER, "monthly_summary.csv")
 ALL_EXPENSES_CSV = os.path.join(DATA_FOLDER, "all_expenses.csv")
 
-# Email from environment variables (set as GitHub Secrets)
-EMAIL = os.environ.get("EMAIL_USER")
-APP_PASSWORD = os.environ.get("EMAIL_APP_PASSWORD")
+# # Email from environment variables (set as GitHub Secrets)
+# EMAIL = os.environ.get("EMAIL_USER")
+# APP_PASSWORD = os.environ.get("EMAIL_APP_PASSWORD")
 
+EMAIL = "sharesam63@gmail.com"
+APP_PASSWORD = "osgmpyguiezhhkhp"
 # ======================
 # STEP 1: READ SHEET
 # ======================
@@ -76,6 +78,7 @@ if args.mode == "report":
     report_month = last_month_date.strftime("%m/%Y")
     
     m = df[df["Month"] == report_month]
+
 
     if not m.empty:
         summary = m[cols].sum()
